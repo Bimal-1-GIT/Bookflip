@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Team Stark</title>
+</head>
+
+<body>
+  <div class="flipbook">
+    <div class="hard"><h2>Tour Through Space</h2><small>~ Stark</small></div>
+    <div class="hard"></div>
+    <div>
+      <h3 style="color: #fff;">Journey through Space begins here</h3>
+    </div>
+    <div>
+      <h2 style="color: #fff;">Chapter-1</h2>
+    </div>
+    <div>
+      <h3></h3>
+    </div>
+    
+    <div>
+      <img src="images/chapter-1/img-1.png" alt="" />
+      <small> 1 </small>
+    </div>
+    <div>
+      <img src="images/chapter-1/img-2.jpg" alt="" />
+      <small> 2 </small>
+    </div>
+    <div>
+      <img src="images/chapter-1/img-3.png" alt="" />
+      <small> 3 </small>
+    </div>
+    <div>
+      <img src="images/chapter-1/img-4.jpg" alt="" />
+      <small> 4 </small>
+    </div>
+    <div>
+      <img src="images/chapter-1/img-5.png" alt="" />
+      <small> 5 </small>
+    </div>
+        <div>
+      <img src="images/chapter-1/img-6.png" alt="" />
+      <small> 6 </small>
+    </div>
+      <div>
+      <img src="images/chapter-1/img-7.png" alt="" />
+      <small> 7 </small>
+    </div>
+        <div>
+      <img src="images/chapter-1/img-8.png" alt="" />
+      <small> 8 </small>
+    </div>
+        <div>
+      <img src="images/chapter-1/img-9.png" alt="" />
+      <small> 9 </small>
+    </div>
+        <div>
+      <img src="images/chapter-1/img-10.png" alt="" />
+      <small> 10 </small>
+    </div>
+            <div>
+      <img src="images/chapter-1/img-11.png" alt="" />
+      <small> 11 </small>
+    </div>
+    <div class="hard"></div>
+    <div class="hard">Thank You <small>~ Team Stark</small></div>
+  </div>
+
+  <div class="book-controls" aria-label="Flipbook navigation">
+    <button type="button" class="nav-button" id="prev-page" aria-label="Previous page">
+      &#8592;
+    </button>
+    <p class="progress" aria-live="polite">
+      Page <span id="page-range">1 &amp; 2</span> of <span id="total-pages">1</span>
+    </p>
+    <button type="button" class="nav-button" id="next-page" aria-label="Next page">
+      &#8594;
+    </button>
+  </div>
+
+  <script src="jquery.js"></script>
+  <script src="turn.js"></script>
+  <script>
+    const $flipbook = $(".flipbook").turn();
+    const $prevButton = $("#prev-page");
+    const $nextButton = $("#next-page");
+    const $pageRangeEl = $("#page-range");
+    const $totalPagesEl = $("#total-pages");
+
+    const totalPages = $flipbook.turn("pages");
+    const storyStartPage = 6;
+    const storyEndPage = 16;
+    const totalStoryPages = Math.max(0, storyEndPage - storyStartPage + 1);
+
+    $totalPagesEl.text(totalStoryPages || totalPages);
+
+    const getStoryPageNumber = (page) => {
+      if (page >= storyStartPage && page <= storyEndPage) {
+        return page - storyStartPage + 1;
+      }
+
+      return null;
+    };
+
+    const formatPageRange = (page) => {
+      const view = $flipbook.turn("view", page);
+      const pages = view.filter((value) => value > 0);
+      const storyPages = pages
+        .map((value) => getStoryPageNumber(value))
+        .filter((value) => value !== null);
+
+      if (storyPages.length === pages.length && storyPages.length > 0) {
+        return storyPages.length === 1
+          ? `${storyPages[0]}`
+          : `${storyPages[0]} & ${storyPages[storyPages.length - 1]}`;
+      }
+
+      if (storyPages.length > 0) {
+        return storyPages.join(" & ");
+      }
+
+      if (pages.length === 0) {
+        return "";
+      }
+
+      if (pages.length === 1) {
+        return `${pages[0]}`;
+      }
+
+      return `${pages[0]} & ${pages[pages.length - 1]}`;
+    };
+
+    const updateControls = (page) => {
+      const currentPage = Math.max(1, Math.min(totalPages, page || $flipbook.turn("page")));
+      $pageRangeEl.text(formatPageRange(currentPage));
+      $prevButton.prop("disabled", currentPage <= 1);
+      $nextButton.prop("disabled", currentPage >= totalPages);
+    };
+
+    updateControls();
+
+    $prevButton.on("click", () => {
+      $flipbook.turn("previous");
+    });
+
+    $nextButton.on("click", () => {
+      $flipbook.turn("next");
+    });
+
+    $flipbook.on("turning", (event, page) => {
+      updateControls(page);
+    });
+
+    $flipbook.on("turned", (event, page) => {
+      updateControls(page);
+    });
+
+    $(document).on("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        if (!$prevButton.prop("disabled")) {
+          event.preventDefault();
+          $flipbook.turn("previous");
+        }
+      }
+
+      if (event.key === "ArrowRight") {
+        if (!$nextButton.prop("disabled")) {
+          event.preventDefault();
+          $flipbook.turn("next");
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
